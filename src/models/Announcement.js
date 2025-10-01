@@ -29,4 +29,5 @@ const Announcement =
   mongoose.model("Announcement", annSchema);
 
 export default Announcement;
+// announcement model updated
 
