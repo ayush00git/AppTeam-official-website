@@ -1,219 +1,153 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
-import { Ubuntu } from "next/font/google";
+import React, { useRef } from 'react';
+import { Space_Grotesk } from "next/font/google";
+import { motion, useScroll, useTransform } from "framer-motion";
 
-const ubuntu = Ubuntu({
+const spaceGrotesk = Space_Grotesk({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
 });
 
-const WhatWeDo = () => {
-  const [activeSection, setActiveSection] = useState(0);
-  
-  const sectionsData = useRef([
-    {
-      id: "hack-on-hills",
-      title: "Conduct Hack on Hills",
-      description: "North India's biggest student-run hackathon, powered by our robust event management and judging platform with real-time updates and seamless participant experience.",
-      image: "/homepage/hoh.webp",
-      link: "https://www.hackonhills.com/"
-    },
-    {
-      id: "nimbus-app", 
-      title: "Nimbus App",
-      description: "A comprehensive platform for NIT Hamirpur's annual tech fest, offering schedules, live updates, interactive maps, and streamlined event registration features.",
-      image: "/homepage/nimbus.webp",
-      link: "https://play.google.com/store/apps/details?id=com.appteam.nimbus2k25&pcampaignid=web_share"
-    },
-    {
-      id: "hillfair-app",
-      title: "Hillfair App", 
-      description: "The official app for NIT Hamirpur's cultural fest, blending vibrant UI with seamless user experience to celebrate student creativity and cultural diversity through innovative features.",
-      image: "/homepage/hillfair.webp",
-      link: "https://play.google.com/store/apps/details?id=com.appteam.hillfair2k24&pcampaignid=web_share"
-    }
-  ]);
+const projects = [
+  {
+    title: "Hack On Hills",
+    role: "EVENT INFRASTRUCTURE",
+    date: "2024 / Q4",
+    tech: ["NEXT.JS", "SOCKET.IO", "POSTGRES"],
+    desc: "North India's premier annual hackathon organized by App Team. Bringing together 500+ hackers to compete for a prize pool worth 1.5L+ in a high-intensity 36-hour sprint.",
+    link: "https://www.hackonhills.com/"
+  },
+  {
+    title: "Nimbus App",
+    role: "FEST UTILITY",
+    date: "2025 / Q1",
+    tech: ["REACT NATIVE", "FIREBASE", "MAPS API"],
+    desc: "The central nervous system for NIT Hamirpur's tech fest. Every year with new and fun features.",
+    link: "https://play.google.com/store/apps/details?id=com.appteam.nimbus2k25"
+  },
+  {
+    title: "Hillfair App",
+    role: "CULTURAL EXPERIENCE",
+    date: "2024 / Q3",
+    tech: ["FLUTTER", "NODE.JS", "AWS"],
+    desc: "A high-performance mobile application for the cultural fest. Focused on haptic feedback, fluid 60fps animations, and a social feed for real-time media sharing.",
+    link: "https://play.google.com/store/apps/details?id=com.appteam.hillfair2k24"
+  }
+];
 
-  // Load fonts
-  useEffect(() => {
-    if (!document.querySelector('link[href*="Gasoek"]')) {
-      const gasoekLink = document.createElement('link');
-      gasoekLink.href = 'https://fonts.googleapis.com/css2?family=Gasoek+One&display=swap';
-      gasoekLink.rel = 'stylesheet';
-      document.head.appendChild(gasoekLink);
-    }
-  }, []);
+const Card = ({ project, index, scrollYProgress }) => {
+  const container = useRef(null);
 
-  // Scroll handler for section detection (desktop only)
-  useEffect(() => {
-    const handleScroll = () => {
-      // Only enable scroll detection on desktop
-      if (window.innerWidth < 1024) return;
-      
-      const sectionElements = document.querySelectorAll('.content-section');
-      const windowHeight = window.innerHeight;
-      let newActiveSection = 0;
+  // Segments: 
+  // P1: 0 - 0.33
+  // P2: 0.33 - 0.66
+  // P3: 0.66 - 1.0
+  const segment = 1 / projects.length;
+  const start = index * segment;
+  const end = (index + 1) * segment;
 
-      sectionElements.forEach((section, index) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= windowHeight * 0.6) {
-          newActiveSection = index;
-        }
-      });
+  // Scale: Zooms in from 0.7 to 1.0 as it enters, then stays or sinks slightly on exit
+  const scale = useTransform(
+    scrollYProgress,
+    [start - 0.1, start, end - 0.1, end],
+    [0.7, 1, 1, 0.9],
+    { clamp: true }
+  );
 
-      if (newActiveSection !== activeSection) {
-        setActiveSection(newActiveSection);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeSection]);
+  // Opacity: STRICT segmentation to prevent overlap
+  const opacity = useTransform(
+    scrollYProgress,
+    [start - 0.05, start, end - 0.05, end],
+    [0, 1, 1, 0],
+    { clamp: true }
+  );
 
   return (
-    <React.Fragment>
-      <style jsx>{`
-        .gasoek-font {
-          font-family: 'Gasoek One', sans-serif;
-        }
-        
-        .purple-shape {
-          clip-path: polygon(0% 15%, 85% 0%, 100% 85%, 15% 100%);
-        }
-        
-        .section-image-transition {
-          transition: all 0.8s cubic-bezier(.4,2,.6,1);
-        }
-      `}</style>
+    <div ref={container} className="h-screen w-screen flex items-center justify-center sticky top-0 bg-[#0a0a0a] overflow-hidden">
+      <motion.div
+        style={{ scale, opacity }}
+        className="relative w-full h-full flex items-center justify-center p-6 md:p-24"
+      >
+        {/* Deep Field Ambient Glow */}
+        <div className="absolute inset-0 bg-linear-to-b from-transparent to-[#00e1ff]/5 pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#00e1ff]/1 blur-[180px] pointer-events-none" />
 
-      <div className="bg-[#140b29]">
-        {/* Mobile Layout */}
-        <div className="lg:hidden">
-          {/* Mobile Header */}
-          <div className="py-12 px-6 text-center">
-            <h1 
-              className="gasoek-font font-normal text-[#a594f9] tracking-wide uppercase leading-tight"
-              style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)' }}
+        <div className="relative z-10 max-w-7xl w-full text-center flex flex-col items-center">
+          <div className="mb-12 overflow-hidden">
+            <motion.h2
+              initial={{ y: 100, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-7xl md:text-[14vw] font-bold uppercase tracking-tighter text-white leading-[0.75]"
             >
-              WHAT WE DO
-            </h1>
+              {project.title}
+            </motion.h2>
           </div>
 
-          {/* Mobile Content Sections */}
-          <div className="px-6 pb-12">
-            {sectionsData.current.map((section, index) => (
-              <div 
-                key={section.id}
-                className={`${ubuntu.className} mb-8 last:mb-0`}
-              >
-                <h2 className="text-2xl font-bold mb-4 text-[#a594f9] leading-tight">
-                  {section.title}
-                </h2>
-                <p className="text-base leading-relaxed text-gray-200 mb-6 font-normal">
-                  {section.description}
-                </p>
-                <a 
-                  href={section.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-[#a594f9] hover:text-purple-200 transition-colors inline-flex items-center group text-sm font-medium"
-                >
-                  <span className="mr-2">
-                    {section.id === 'hack-on-hills' ? 'HACKONHILLS-7.0' : 
-                     section.id === 'nimbus-app' ? 'Nimbus-2k25' : 'Hillfair-2k24'}
-                  </span>
-                  <span className="transform group-hover:translate-x-2 transition-transform">→</span>
-                </a>
-                
-                {/* Divider line for mobile */}
-                {index < sectionsData.current.length - 1 && (
-                  <div 
-                    className="w-full h-0.5 mt-8"
-                    style={{ background: 'linear-gradient(90deg, #a594f9 0%, transparent 100%)' }}
-                  ></div>
-                )}
-              </div>
-            ))}
+          <div className="max-w-4xl">
+            <p className="text-gray-400 text-xl md:text-3xl font-light leading-relaxed mb-20 px-4">
+              {project.desc}
+            </p>
+
+            <a
+              href={project.link}
+              target="_blank"
+              className="group relative inline-flex items-center gap-6 text-white hover:text-[#00e1ff] transition-colors duration-500 font-bold uppercase tracking-[0.5em] text-[11px]"
+            >
+              <span className="relative">
+                Explore
+                <div className="absolute -bottom-3 left-0 w-full h-px bg-white/20 scale-x-100 group-hover:bg-[#00e1ff] transition-colors duration-500" />
+              </span>
+              <span className="text-3xl group-hover:translate-x-3 transition-transform duration-500">→</span>
+            </a>
           </div>
         </div>
-
-        {/* Desktop Layout */}
-        <div className="hidden lg:flex lg:flex-row items-start">
-          {/* Left Panel - Sticky */}
-          <div className="lg:sticky lg:top-0 lg:w-1/2 h-screen flex items-center justify-center bg-[#140b29] flex-shrink-0 z-10">
-            <div className="relative w-80 h-[420px] flex items-center justify-center">
-              {/* Stacked images */}
-              {sectionsData.current.map((section, idx) => (
-                <img
-                  key={section.id}
-                  src={section.image}
-                  alt={section.title}
-                  className={`absolute left-1/2 top-1/2 w-64 h-96 rounded-xl object-cover shadow-2xl -translate-x-1/2 -translate-y-1/2 section-image-transition
-                    ${idx === activeSection ? 'z-30 opacity-100 scale-100' : idx < activeSection ? 'z-20 opacity-0 scale-95' : 'z-10 opacity-0 scale-95'}`}
-                  style={{ 
-                    transition: 'all 0.8s cubic-bezier(.4,2,.6,1)', 
-                    pointerEvents: idx === activeSection ? 'auto' : 'none' 
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Right Panel - Scrollable Content */}
-          <div className="lg:w-1/2 bg-[#140b29] relative z-20">
-            {/* Header */}
-            <div className="h-screen flex items-center justify-center px-8 lg:px-16">
-              <h1 
-                className="gasoek-font font-normal text-center text-[#a594f9] tracking-wide uppercase leading-tight"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5rem)' }}
-              >
-                WHAT WE DO
-              </h1>
-            </div>
-
-            {/* Content Sections */}
-            {sectionsData.current.map((section, index) => (
-              <div 
-                key={section.id}
-                className={`${ubuntu.className} content-section min-h-[80vh] px-8 lg:px-16 py-16 flex flex-col justify-center transition-all duration-500 ${
-                  index === activeSection ? 'opacity-100 transform-none' : 'opacity-30 translate-y-5'
-                }`}
-              >
-                <h2 className="text-4xl font-bold mb-8 text-[#a594f9] leading-tight">
-                  {section.title}
-                </h2>
-                <p className="text-lg leading-relaxed text-gray-200 mb-12 max-w-[90%] font-normal">
-                  {section.description}
-                  <br />
-                  <a 
-                    href={section.link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-[#a594f9] hover:text-purple-200 transition-colors inline-flex items-center mt-4 group"
-                  >
-                    <span className="mr-2">
-                      {section.id === 'hack-on-hills' ? 'HACKONHILLS-7.0' : 
-                       section.id === 'nimbus-app' ? 'Nimbus-2k25' : 'Hillfair-2k24'}
-                    </span>
-                    <span className="transform group-hover:translate-x-2 transition-transform">→</span>
-                  </a>
-                </p>
-                <div 
-                  className="w-full h-0.5 mt-auto"
-                  style={{ background: 'linear-gradient(90deg, #a594f9 0%, transparent 100%)' }}
-                ></div>
-              </div>
-            ))}
-
-            {/* Bottom Spacer */}
-            <div className="h-[50vh]"></div>
-          </div>
-        </div>
-      </div>
-    </React.Fragment>
+      </motion.div>
+    </div>
   );
 };
 
-export default WhatWeDo;
+const ProjectStack = () => {
+  const container = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ['start start', 'end end']
+  });
+
+  return (
+    <section ref={container} className="bg-[#0a0a0a] relative">
+
+      {/* Intro Frame */}
+      <div className="h-screen flex items-center justify-center bg-[#050505]">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2 }}
+          className="text-center"
+        >
+          <h2 className={`${spaceGrotesk.className} text-white text-8xl md:text-[16vw] font-bold uppercase tracking-tighter leading-none`}>
+            WHAT WE<br />D<span className="text-[#00e1ff]">O</span> ?
+          </h2>
+        </motion.div>
+      </div>
+
+      {/* Gallery Runway - Increased to 400vh to give more "stay" time per card */}
+      <div className="relative h-[400vh]">
+        {projects.map((project, i) => (
+          <Card
+            key={i}
+            index={i}
+            project={project}
+            scrollYProgress={scrollYProgress}
+          />
+        ))}
+      </div>
+
+      {/* Outro Spacer */}
+      <div className="h-[20vh] bg-[#0a0a0a]" />
+    </section>
+  );
+};
+
+export default ProjectStack;

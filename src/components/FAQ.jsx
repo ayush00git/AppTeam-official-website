@@ -1,173 +1,119 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useRouter } from "next/navigation";
-import { Ubuntu } from "next/font/google";
+import React, { useState } from 'react';
+import { Space_Grotesk } from "next/font/google";
+import { motion, AnimatePresence } from "framer-motion";
 
-const ubuntu = Ubuntu({
+const spaceGrotesk = Space_Grotesk({
   weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
 });
 
+const faqData = [
+  {
+    id: "01",
+    question: "How can I join the APP Team?",
+    answer: "Recruitment drives occur at the start of each semester. Monitor our comms channels for the 'Recruitment Protocol' link. Candidates undergo a two-stage evaluation: Technical Assessment and Core Interview."
+  },
+  {
+    id: "02",
+    question: "Is prior experience mandatory?",
+    answer: "Negative. While existing knowledge helps, we value raw potential and learning velocity. We provide the mentorship; you provide the dedication."
+  },
+  {
+    id: "03",
+    question: "What is the project scope?",
+    answer: "We engineer utility platforms for campus fests (Nimbus, Hillfair), maintain the official college web infrastructure, and deploy open-source tools. Our stack covers Web, Mobile (Native/Cross), and AI integration."
+  },
+  {
+    id: "04",
+    question: "Are First-Year students eligible?",
+    answer: "Affirmative. Freshmen are our primary investment target. Joining early allows for a longer growth trajectory within the ecosystem."
+  },
+  {
+    id: "05",
+    question: "Required Tech Stack?",
+    answer: "Domain specific. Web: React/Next.js. App: Flutter/React Native/Swift/Kotlin. Backend: Node/Go/Python. We prioritize engineering fundamentals over syntax memorization."
+  },
+  {
+    id: "06",
+    question: "Expected Time Commitment?",
+    answer: "Standard load is 10-12 hours/week. This scales up during 'Crunch Mode' (Hackathons/Fest releases). Active contribution is the only metric that matters."
+  }
+];
+
+const FAQItem = ({ item, index, isOpen, onClick }) => {
+  return (
+    <div className="border-b border-white/5">
+      <button
+        onClick={onClick}
+        className="w-full py-12 flex items-center justify-between text-left group transition-all duration-300"
+      >
+        <div className="flex items-center gap-8 md:gap-16">
+          <span className={`text-[10px] font-mono tracking-widest transition-colors duration-500 ${isOpen ? 'text-[#00e1ff]' : 'text-[#333]'}`}>
+            /{item.id}
+          </span>
+          <h3 className={`text-2xl md:text-5xl font-bold uppercase tracking-tighter transition-colors duration-500 ${isOpen ? 'text-white' : 'text-[#f4f4f5]/30 group-hover:text-[#f4f4f5]/60'}`}>
+            {item.question}
+          </h3>
+        </div>
+
+        <div className={`text-3xl transition-transform duration-500 ${isOpen ? 'rotate-45 text-[#00e1ff]' : 'text-[#333]'}`}>
+          +
+        </div>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="pb-16 pl-16 md:pl-32 max-w-4xl">
+              <p className="text-[#888] text-xl md:text-2xl font-light leading-relaxed">
+                {item.answer}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const FAQ = () => {
-  const [openQuestion, setOpenQuestion] = useState(null);
-  const router = useRouter();
+  const [openIndex, setOpenIndex] = useState(null);
 
-  const goToContact = () => {
-    router.push("/contactUs"); // 👈 navigates to /about
-  };
-
-  // Load fonts
-  useEffect(() => {
-    if (!document.querySelector('link[href*="Gasoek"]')) {
-      const gasoekLink = document.createElement('link');
-      gasoekLink.href = 'https://fonts.googleapis.com/css2?family=Gasoek+One&display=swap';
-      gasoekLink.rel = 'stylesheet';
-      document.head.appendChild(gasoekLink);
-    }
-  }, []);
-
-  const faqData = [
-    {
-      id: 1,
-      question: "How can I join the APP Team?",
-      answer: "You can join by filling out the recruitment form we share at the start of each semester. Keep an eye on our social media channels and official college announcements for recruitment notifications. We typically conduct interviews and technical assessments to evaluate candidates."
-    },
-    {
-      id: 2,
-      question: "Do I need any prior experience to join?",
-      answer: "No prior experience is mandatory! We welcome beginners who are eager to learn. However, basic knowledge of programming concepts and enthusiasm for technology will be beneficial. We provide training and mentorship to help you grow."
-    },
-    {
-      id: 3,
-      question: "What kind of projects do you work on?",
-      answer: "We develop mobile applications for college festivals like Nimbus and Hillfair, create websites for various college events, organize the annual Hack on Hills hackathon, and work on innovative tech solutions. Our projects span web development, mobile apps, and more."
-    },
-    {
-      id: 4,
-      question: "Can first-year students join the team?",
-      answer: "Absolutely! First-year students are encouraged to join and explore different domains. It's a great opportunity to start your tech journey early and learn from senior team members. We believe in nurturing talent from the ground up."
-    },
-    {
-      id: 5,
-      question: "What programming languages should I know?",
-      answer: "The required languages depend on your domain of interest. For web development: JavaScript, HTML, CSS. For mobile apps: Java/Kotlin (Android), Swift (iOS), or React Native/Flutter. For AI/ML: Python. However, willingness to learn is more important than knowing everything beforehand."
-    },
-    {
-      id: 6,
-      question: "How much time commitment is expected?",
-      answer: "We expect active participation in team meetings, project work, and events. Typically, members spend 10-12 hours per week on team activities, but this can vary during project deadlines or major events like Hack on Hills. We value quality contribution over just time spent."
-    }
-  ];
-
-  const toggleQuestion = (questionId) => {
-    setOpenQuestion(openQuestion === questionId ? null : questionId);
+  const handleToggle = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <React.Fragment>
-      <style jsx>{`
-        body {
-          font-family: 'Ubuntu', sans-serif;
-        }
-        
-        .gasoek-font {
-          font-family: 'Gasoek One', sans-serif;
-        }
-        
-        .faq-item {
-          border-bottom: 1px solid rgba(165, 148, 249, 0.2);
-        }
-        
-        .faq-item:last-child {
-          border-bottom: none;
-        }
-        
-        .answer-content {
-          max-height: 0;
-          overflow: hidden;
-          transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-        }
-        
-        .answer-content.open {
-          max-height: 200px;
-          padding-top: 1rem;
-          padding-bottom: 1.5rem;
-        }
-        
-        .chevron {
-          transition: transform 0.3s ease;
-        }
-        
-        .chevron.rotate {
-          transform: rotate(180deg);
-        }
-      `}</style>
+    <section className={`bg-[#050505] py-40 px-6 md:px-16 ${spaceGrotesk.className}`}>
+      <div className="max-w-7xl mx-auto">
 
-      <div className="bg-[#140b29] min-h-screen py-20 px-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-16">
-            <h1 
-              className="gasoek-font font-normal text-[#a594f9] mb-4 tracking-wide"
-              style={{ fontSize: 'clamp(3rem, 6vw, 5rem)' }}
-            >
-              FREQUENTLY ASKED QUESTIONS
-            </h1>
-            <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-              Everything you need to know about joining and being part of the APP Team
-            </p>
-          </div>
+        <header className="mb-32">
+          <h2 className="text-7xl md:text-[10vw] font-bold uppercase tracking-tighter leading-none text-white">
+            Fa<span className="text-[#00e1ff]">q</span>
+          </h2>
+        </header>
 
-          {/* FAQ List */}
-          <div className={`border-2 ${ubuntu.className} border-purple-200 rounded-2xl shadow-2xl p-8`}>
-            {faqData.map((faq) => (
-              <div key={faq.id} className="faq-item">
-                <button
-                  onClick={() => toggleQuestion(faq.id)}
-                  className="w-full py-6 flex justify-between items-start text-left focus:outline-none group"
-                >
-                  <h3 className="text-xl cursor-pointer font-semibold text-white pr-8 group-hover:text-purple-100 transition-colors">
-                    {faq.question}
-                  </h3>
-                  <div className={`chevron cursor-pointer flex-shrink-0 ${openQuestion === faq.id ? 'rotate' : ''}`}>
-                    <svg 
-                      className="w-6 h-6 text-purple-400" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M19 9l-7 7-7-7" 
-                      />
-                    </svg>
-                  </div>
-                </button>
-                
-                <div className={`answer-content ${openQuestion === faq.id ? 'open' : ''}`}>
-                  <p className="text-gray-300 text-base leading-relaxed pl-0">
-                    {faq.answer}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Contact Section */}
-          <div className="text-center mt-12">
-            <p className="text-purple-200 text-lg mb-4">
-              Still have questions?
-            </p>
-            <button className="bg-[#a594f9] hover:bg-[rgb(147,129,236)] text-white cursor-pointer font-semibold py-3 px-8 rounded-full transition-colors duration-300 transform hover:scale-102"
-            onClick={(goToContact)}>
-              Contact Us
-            </button>
-          </div>
+        <div className="border-t border-white/5">
+          {faqData.map((item, index) => (
+            <FAQItem
+              key={index}
+              item={item}
+              index={index}
+              isOpen={openIndex === index}
+              onClick={() => handleToggle(index)}
+            />
+          ))}
         </div>
+
       </div>
-    </React.Fragment>
+    </section>
   );
 };
 

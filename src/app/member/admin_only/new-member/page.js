@@ -1,8 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import { Space_Grotesk } from "next/font/google";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+
+const spaceGrotesk = Space_Grotesk({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+});
 
 const NewMemberForm = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     role: "",
@@ -24,7 +33,6 @@ const NewMemberForm = () => {
       ...prev,
       [name]: value,
     }));
-    // Clear error when user starts typing
     if (error) setError("");
   };
 
@@ -43,7 +51,6 @@ const NewMemberForm = () => {
     const file = e.target.files[0];
 
     if (file) {
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         setError("Please select a valid image file");
         return;
@@ -52,7 +59,6 @@ const NewMemberForm = () => {
       setIsUploading(true);
       setFileName("Processing...");
 
-      // Use FileReader to process the image
       const reader = new FileReader();
 
       reader.onload = function (event) {
@@ -64,7 +70,7 @@ const NewMemberForm = () => {
           setPreviewImage(event.target.result);
           setFileName(file.name);
           setIsUploading(false);
-        }, 800); // Realistic processing time
+        }, 800);
       };
 
       reader.onerror = function () {
@@ -93,7 +99,6 @@ const NewMemberForm = () => {
     setError("");
     setSuccess("");
 
-    // Validate required fields
     const missingFields = validateRequiredFields();
     if (missingFields.length > 0) {
       setError(`Required fields: ${missingFields.join(", ")}`);
@@ -121,7 +126,6 @@ const NewMemberForm = () => {
 
       if (response.ok) {
         setSuccess("Successfully joined the team!");
-        // Reset form
         setFormData({
           name: "",
           role: "",
@@ -131,6 +135,11 @@ const NewMemberForm = () => {
           profileImageURL: null,
         });
         resetFileInput();
+
+        // Redirect to /member page after 2 seconds
+        setTimeout(() => {
+          router.push("/member");
+        }, 2000);
       } else {
         const errorData = await response.json();
         setError(errorData.message || "Failed to submit form");
@@ -156,7 +165,6 @@ const NewMemberForm = () => {
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
-      // Simulate file input change
       const event = {
         target: {
           files: [file],
@@ -172,32 +180,42 @@ const NewMemberForm = () => {
   };
 
   return (
-    <div
-      className="font-sans min-h-screen flex items-center justify-center p-5 select-none"
-      style={{ backgroundColor: "#140b29" }}
-    >
-      <div className="form-card rounded-3xl p-10 w-full max-w-md border-2 border-white/15 shadow-2xl relative">
-        <h1 className="text-center text-white text-2xl font-semibold mb-8 text-shadow">
-          Team Member&apos;s Details
+    <div className={`${spaceGrotesk.className} min-h-screen bg-[#050505] text-[#f4f4f5] flex items-center justify-center py-32 px-6 relative overflow-hidden`}>
+
+      {/* Background Ambience */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#00e1ff]/[0.02] blur-[150px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#00e1ff]/[0.01] blur-[120px]" />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative z-10 w-full max-w-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm rounded-2xl p-8 md:p-12"
+      >
+        <h1 className="text-center text-4xl md:text-5xl font-bold uppercase tracking-tight mb-2">
+          Join the Tea<span className="text-[#00e1ff]">m</span>
         </h1>
+        <p className="text-center text-gray-400 text-sm mb-8">Fill in your details to become a member</p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm">
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-300 text-sm">
+          <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-sm">
             {success}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
-          <div className="mb-6">
-            <label htmlFor="name" className="block text-gray-200 text-sm font-medium mb-2 uppercase tracking-wide">
-              Full Name <span className="text-red-400">*</span>
+          <div>
+            <label htmlFor="name" className="block text-gray-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">
+              Full Name <span className="text-[#00e1ff]">*</span>
             </label>
             <input
               type="text"
@@ -206,34 +224,32 @@ const NewMemberForm = () => {
               value={formData.name}
               onChange={handleInputChange}
               placeholder="Enter your full name"
-              className={`w-full py-4 px-5 bg-white/8 border-2 rounded-xl text-white text-base outline-none focus:border-blue-400 focus:bg-white/12 placeholder:text-white/50 ${
-                isFieldMissing("Full Name")
-                  ? "border-red-500/70"
-                  : "border-white/20"
-              }`}
+              className={`w-full py-4 px-5 bg-black/40 border rounded-lg text-white text-sm outline-none focus:border-[#00e1ff] focus:bg-black/60 transition-all placeholder:text-gray-600 ${isFieldMissing("Full Name")
+                ? "border-red-500/50"
+                : "border-white/10"
+                }`}
               required
             />
           </div>
 
           {/* Position */}
-          <div className="mb-6">
-            <label htmlFor="role" className="block text-gray-200 text-sm font-medium mb-2 uppercase tracking-wide">
-              Position <span className="text-red-400">*</span>
+          <div>
+            <label htmlFor="role" className="block text-gray-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">
+              Position <span className="text-[#00e1ff]">*</span>
             </label>
             <select
               id="role"
               name="role"
               value={formData.role}
               onChange={handleInputChange}
-              className={`w-full py-4 px-5 bg-white/8 border-2 rounded-xl text-white text-base outline-none focus:border-blue-400 focus:bg-white/12 ${
-                isFieldMissing("Position")
-                  ? "border-red-500/70"
-                  : "border-white/20"
-              }`}
+              className={`w-full py-4 px-5 bg-black/40 border rounded-lg text-white text-sm outline-none focus:border-[#00e1ff] focus:bg-black/60 transition-all ${isFieldMissing("Position")
+                ? "border-red-500/50"
+                : "border-white/10"
+                }`}
               required
             >
               <option value="" disabled>
-                What&apos;s your position
+                Select your position
               </option>
               <option value="Alumni">Alumni</option>
               <option value="Club Secretary">Club Secretary</option>
@@ -245,9 +261,9 @@ const NewMemberForm = () => {
           </div>
 
           {/* Bio */}
-          <div className="mb-6">
-            <label htmlFor="bio" className="block text-gray-200 text-sm font-medium mb-2 uppercase tracking-wide">
-              Tell a little about yourself
+          <div>
+            <label htmlFor="bio" className="block text-gray-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">
+              Bio
             </label>
             <input
               type="text"
@@ -255,15 +271,15 @@ const NewMemberForm = () => {
               name="bio"
               value={formData.bio}
               onChange={handleInputChange}
-              placeholder="Enter a tagline"
-              className="w-full py-4 px-5 bg-white/8 border-2 border-white/20 rounded-xl text-white text-base outline-none focus:border-blue-400 focus:bg-white/12 placeholder:text-white/50"
+              placeholder="A short tagline about yourself"
+              className="w-full py-4 px-5 bg-black/40 border border-white/10 rounded-lg text-white text-sm outline-none focus:border-[#00e1ff] focus:bg-black/60 transition-all placeholder:text-gray-600"
             />
           </div>
 
           {/* GitHub */}
-          <div className="mb-6">
-            <label htmlFor="githubURL" className="block text-gray-200 text-sm font-medium mb-2 uppercase tracking-wide">
-              Github Link 🔗 <span className="text-red-400">*</span>
+          <div>
+            <label htmlFor="githubURL" className="block text-gray-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">
+              GitHub Link <span className="text-[#00e1ff]">*</span>
             </label>
             <input
               type="url"
@@ -271,20 +287,19 @@ const NewMemberForm = () => {
               name="githubURL"
               value={formData.githubURL}
               onChange={handleInputChange}
-              placeholder="Enter your github profile link"
-              className={`w-full py-4 px-5 bg-white/8 border-2 rounded-xl text-white text-base outline-none focus:border-blue-400 focus:bg-white/12 placeholder:text-white/50 ${
-                isFieldMissing("GitHub Link")
-                  ? "border-red-500/70"
-                  : "border-white/20"
-              }`}
+              placeholder="https://github.com/username"
+              className={`w-full py-4 px-5 bg-black/40 border rounded-lg text-white text-sm outline-none focus:border-[#00e1ff] focus:bg-black/60 transition-all placeholder:text-gray-600 ${isFieldMissing("GitHub Link")
+                ? "border-red-500/50"
+                : "border-white/10"
+                }`}
               required
             />
           </div>
 
           {/* LinkedIn */}
-          <div className="mb-6">
-            <label htmlFor="linkedInURL" className="block text-gray-200 text-sm font-medium mb-2 uppercase tracking-wide">
-              LinkedIn Link 🔗 <span className="text-red-400">*</span>
+          <div>
+            <label htmlFor="linkedInURL" className="block text-gray-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">
+              LinkedIn Link <span className="text-[#00e1ff]">*</span>
             </label>
             <input
               type="url"
@@ -292,19 +307,18 @@ const NewMemberForm = () => {
               name="linkedInURL"
               value={formData.linkedInURL}
               onChange={handleInputChange}
-              placeholder="Enter your linkedin profile link"
-              className={`w-full py-4 px-5 bg-white/8 border-2 rounded-xl text-white text-base outline-none focus:border-blue-400 focus:bg-white/12 placeholder:text-white/50 ${
-                isFieldMissing("LinkedIn Link")
-                  ? "border-red-500/70"
-                  : "border-white/20"
-              }`}
+              placeholder="https://linkedin.com/in/username"
+              className={`w-full py-4 px-5 bg-black/40 border rounded-lg text-white text-sm outline-none focus:border-[#00e1ff] focus:bg-black/60 transition-all placeholder:text-gray-600 ${isFieldMissing("LinkedIn Link")
+                ? "border-red-500/50"
+                : "border-white/10"
+                }`}
               required
             />
           </div>
 
           {/* Profile Image */}
-          <div className="mb-6">
-            <label htmlFor="profile-image" className="block text-gray-200 text-sm font-medium mb-2 uppercase tracking-wide">
+          <div>
+            <label htmlFor="profile-image" className="block text-gray-400 text-xs font-bold uppercase tracking-[0.2em] mb-3">
               Profile Image
             </label>
             <div className="relative">
@@ -317,11 +331,10 @@ const NewMemberForm = () => {
               />
               <label
                 htmlFor="profile-image"
-                className={`flex items-center justify-between w-full py-4 px-5 bg-white/8 border-2 border-dashed border-white/30 rounded-xl text-white/70 text-base cursor-pointer transition-all duration-300 hover:border-blue-400 hover:bg-white/12 ${
-                  isUploading
-                    ? "border-blue-400 bg-blue-400/10 cursor-not-allowed"
-                    : ""
-                }`}
+                className={`flex items-center justify-between w-full py-4 px-5 bg-black/40 border-2 border-dashed rounded-lg text-gray-400 text-sm cursor-pointer transition-all duration-300 hover:border-[#00e1ff] hover:bg-black/60 ${isUploading
+                  ? "border-[#00e1ff] bg-[#00e1ff]/10 cursor-not-allowed"
+                  : "border-white/20"
+                  }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -329,7 +342,7 @@ const NewMemberForm = () => {
                 <div className="flex items-center gap-3">
                   <span>{fileName}</span>
                   {isUploading ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-blue-400 rounded-full animate-spin"></div>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-[#00e1ff] rounded-full animate-spin"></div>
                   ) : (
                     <span className="text-lg">📁</span>
                   )}
@@ -339,13 +352,13 @@ const NewMemberForm = () => {
 
             {/* Image Preview */}
             {previewImage && (
-              <div className="mt-3 text-center">
+              <div className="mt-4 text-center">
                 <div className="relative w-32 h-32 mx-auto">
                   <Image
                     src={previewImage}
                     alt="Profile preview"
                     fill
-                    className="rounded-xl border-2 border-white/20 object-cover"
+                    className="rounded-lg border-2 border-white/20 object-cover"
                     sizes="128px"
                   />
                 </div>
@@ -357,52 +370,12 @@ const NewMemberForm = () => {
           <button
             type="submit"
             disabled={isSubmitting || isUploading}
-            className="w-full py-4 bg-gradient-to-r from-blue-400 to-purple-600 border-none rounded-xl text-white text-base font-semibold uppercase tracking-wide mt-3 cursor-pointer transition-all duration-300 hover:from-blue-500 hover:to-purple-700 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-4 bg-[#00e1ff] text-black font-bold uppercase tracking-[0.3em] text-sm hover:bg-white transition-all duration-300 rounded-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Submitting..." : "Join the Team"}
           </button>
         </form>
-      </div>
-
-      <style jsx>{`
-        .text-shadow {
-          text-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-        }
-        select option {
-          background: #140b29;
-          color: #b3a7e6;
-        }
-        input[type="text"],
-        input[type="url"],
-        select {
-          background: #20194a !important;
-          border-color: #3a2e6e !important;
-          color: #b3a7e6 !important;
-        }
-        input[type="text"]::placeholder,
-        input[type="url"]::placeholder {
-          color: #7c6bb3 !important;
-          opacity: 1;
-        }
-        input[type="text"]:focus,
-        input[type="url"]:focus,
-        select:focus {
-          border-color: #7c6bb3 !important;
-          background: #251e5a !important;
-          color: #e0d6ff !important;
-        }
-        .file-label,
-        label[for="profile-image"] {
-          background: #20194a !important;
-          border-color: #3a2e6e !important;
-          color: #b3a7e6 !important;
-        }
-        .file-label:hover,
-        label[for="profile-image"]:hover {
-          border-color: #7c6bb3 !important;
-          background: #251e5a !important;
-        }
-      `}</style>
+      </motion.div>
     </div>
   );
 };

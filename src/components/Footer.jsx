@@ -1,294 +1,96 @@
 "use client";
 import React from "react";
-import { Ubuntu } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 
-const ubuntu = Ubuntu({
-  weight: ["300", "400", "500", "700"],
-  subsets: ["latin"],
+const spaceGrotesk = Space_Grotesk({
+    weight: ["300", "400", "500", "700"],
+    subsets: ["latin"],
 });
 
 const Footer = () => {
-  return (
-    <>
-      {/* Custom styles for animations and gradients */}
-      <style jsx>{`
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-            opacity: 0.5;
-          }
-          50% {
-            transform: translateY(-20px) rotate(180deg);
-            opacity: 0.8;
-          }
-        }
+    const currentYear = new Date().getFullYear();
 
-        .float-animation {
-          animation: float 6s ease-in-out infinite;
-        }
+    return (
+        <footer className={`bg-[#050505] text-[#f4f4f5] py-32 px-6 md:px-16 border-t border-white/5 relative overflow-hidden ${spaceGrotesk.className}`}>
 
-        .float-delay-2 {
-          animation-delay: 2s;
-        }
+            {/* Background Glow */}
+            <div className="absolute bottom-0 right-0 w-[50%] h-[50%] bg-[#00e1ff]/2 blur-[150px] pointer-events-none" />
 
-        .float-delay-4 {
-          animation-delay: 4s;
-        }
+            <div className="max-w-7xl mx-auto">
 
-        .footer-bg-gradient {
-          background: linear-gradient(
-            135deg,
-            #0f0823 0%,
-            #1a0d33 50%,
-            #140b29 100%
-          );
-        }
+                {/* --- MAIN GRID --- */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 mb-24">
 
-        .footer-link {
-          position: relative;
-          padding-left: 0;
-          transition: all 0.3s ease;
-        }
+                    {/* 1. BRAND */}
+                    <div className="lg:col-span-2">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="w-2.5 h-2.5 bg-[#00e1ff] rounded-full shadow-[0_0_15px_#00e1ff]" />
+                            <span className="text-xl font-bold tracking-tight uppercase">AppTeam</span>
+                        </div>
+                        <h2 className="text-4xl md:text-6xl font-bold uppercase tracking-tighter leading-[0.9] mb-8">
+                            Bridging Design<br />and Engineering.
+                        </h2>
+                        <p className="text-gray-500 max-w-sm text-lg font-light leading-relaxed">
+                            The official technical society of NIT Hamirpur. We design and build high-performance digital solutions for the next generation.
+                        </p>
+                    </div>
 
-        .footer-link::before {
-          content: "";
-          position: absolute;
-          left: -5px;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 0;
-          height: 1px;
-          background: #6366f1;
-          transition: width 0.3s ease;
-        }
+                    {/* 2. LINKS */}
+                    <div>
+                        <h3 className="text-white text-xs font-bold uppercase tracking-[0.3em] mb-10">Directory</h3>
+                        <ul className="space-y-4">
+                            {['Team', 'About', 'Events', 'Contact'].map((item) => (
+                                <li key={item}>
+                                    <a
+                                        href={`/${item === 'Team' ? 'member' : item.toLowerCase() === 'contact' ? 'contactUs' : item.toLowerCase()}`}
+                                        className="text-gray-500 text-lg hover:text-[#00e1ff] transition-colors duration-300"
+                                    >
+                                        {item}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
-        .footer-link:hover::before {
-          width: 4px;
-        }
+                    {/* 3. CONNECT */}
+                    <div>
+                        <h3 className="text-white text-xs font-bold uppercase tracking-[0.3em] mb-10">Uplink</h3>
+                        <ul className="space-y-4">
+                            {[
+                                { name: 'Instagram', url: 'https://www.instagram.com/appteam_nith/' },
+                                { name: 'LinkedIn', url: 'https://www.linkedin.com/company/appteam-nith/' },
+                                { name: 'GitHub', url: 'https://github.com/ayush00git/AppTeam-official-website' }
+                            ].map((social) => (
+                                <li key={social.name}>
+                                    <a
+                                        href={social.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 text-lg hover:text-[#00e1ff] transition-colors duration-300 flex items-center gap-2 group"
+                                    >
+                                        {social.name}
+                                        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[10px]">↗</span>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
 
-        .footer-link:hover {
-          padding-left: 8px;
-        }
+                {/* --- BOTTOM SECTION --- */}
+                <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-600">
+                    <div>
+                        &copy; {currentYear} APP TEAM NITH
+                    </div>
 
-        .footer-heading::after {
-          content: "";
-          position: absolute;
-          left: 0;
-          bottom: -8px;
-          width: 30px;
-          height: 2px;
-          background: linear-gradient(90deg, #6366f1, #8b5cf6);
-          border-radius: 1px;
-        }
+                    <div className="flex items-center gap-2">
+                        <span className="text-white/20">Developer:</span><a href="https://github.com/ayush00git" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300">Ayush</a>
+                    </div>
+                </div>
 
-        @media (max-width: 480px) {
-          .footer-heading::after {
-            left: 50%;
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
-
-      <footer
-        className={`${ubuntu.className} footer-bg-gradient relative overflow-hidden`}
-      >
-        <div className="max-w-6xl mx-auto px-5 pt-16 relative z-20 md:pt-20">
-          {/* Footer Top Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16 lg:gap-16">
-            {/* Footer Brand */}
-            <div className="flex flex-col gap-5 text-center lg:text-left">
-              <h2
-                className="text-4xl font-extrabold text-indigo-400 m-0"
-                style={{ textShadow: "0 0 20px rgba(99, 102, 241, 0.5)" }}
-              >
-                AppTeam
-              </h2>
-              <p className="text-gray-300 text-lg leading-relaxed max-w-sm mx-auto lg:mx-0">
-                Building tomorrow's digital experiences today
-              </p>
-              <div className="flex gap-4 justify-center lg:justify-start">
-                {/* github icon */}
-                <a
-                  href="https://github.com/ayush00git/AppTeam-official-website"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-11 h-11 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-gray-400 transition-all duration-300 hover:bg-indigo-500/20 hover:border-indigo-400 hover:text-indigo-400 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/30"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="transition-transform duration-300 group-hover:scale-110"
-                  >
-                    <path
-                      d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 
-      3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 
-      0-.285-.01-1.04-.015-2.04-3.338.726-4.042-1.61-4.042-1.61 
-      -.546-1.387-1.333-1.757-1.333-1.757-1.09-.744.084-.729.084-.729 
-      1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.807 1.305 
-      3.492.998.107-.775.418-1.305.762-1.605-2.665-.305-5.467-1.335-5.467-5.93 
-      0-1.31.469-2.381 1.236-3.221-.123-.304-.536-1.527.117-3.176 
-      0 0 1.008-.322 3.301 1.23a11.52 11.52 0 0 1 3.003-.404 
-      c1.018.005 2.042.138 3.003.404 2.292-1.552 3.297-1.23 
-      3.297-1.23.653 1.649.24 2.872.118 3.176.77.84 
-      1.236 1.911 1.236 3.221 0 4.609-2.807 5.624-5.479 
-      5.921.43.371.823 1.102.823 2.222 0 1.604-.015 
-      2.896-.015 3.293 0 .319.218.694.825.576C20.565 
-      22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-                    />
-                  </svg>
-                </a>
-
-                {/* LinkedIn */}
-                <a
-                  href="https://www.linkedin.com/company/appteam-nith/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-11 h-11 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-gray-400 transition-all duration-300 hover:bg-indigo-500/20 hover:border-indigo-400 hover:text-indigo-400 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/30"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                  </svg>
-                </a>
-
-                {/* Instagram */}
-                <a
-                  href="https://www.instagram.com/appteam_nith/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-11 h-11 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-gray-400 transition-all duration-300 hover:bg-indigo-500/20 hover:border-indigo-400 hover:text-indigo-400 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/30"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.061 1.278.263 2.148.567 2.913.306.789.717 1.459 1.384 2.126s1.337 1.079 2.126 1.384c.765.295 1.635.497 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.278-.061 2.148-.263 2.913-.567.789-.306 1.459-.717 2.126-1.384s1.079-1.337 1.384-2.126c.295-.765.497-1.635.558-2.913.012-1.278.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.061-1.278-.263-2.148-.567-2.913-.306-.789-.717-1.459-1.384-2.126S20.65 1.079 19.86 0.772c-.765-.295-1.635-.497-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.2 0 3.583.012 4.85.07 1.17.055 1.834.249 2.227.4.597.23 1.05.545 1.432.928.382.383.698.834.928 1.432.15.393.345 1.057.4 2.227.058 1.267.07 1.65.07 4.85s-.012 3.583-.07 4.85c-.055 1.17-.249 1.834-.4 2.227-.23.597-.545 1.05-.928 1.432-.383.382-.834.698-1.432.928-.393.15-1.057.345-2.227.4-1.267.058-1.65.07-4.85.07s-3.583-.012-4.85-.07c-1.17-.055-1.834-.249-2.227-.4-.597-.23-1.05-.545-1.432-.928-.382-.383-.698-.834-.928-1.432-.15-.393-.345-1.057-.4-2.227-.058-1.267-.07-1.65-.07-4.85s.012-3.583.07-4.85c.055-1.17.249-1.834.4-2.227.23-.597.545-1.05.928-1.432.383-.382.834-.698 1.432-.928.393-.15 1.057-.345 2.227-.4 1.267-.058 1.65-.07 4.85-.07zm0 3.673c-3.4 0-6.16 2.76-6.16 6.16s2.76 6.16 6.16 6.16 6.16-2.76 6.16-6.16-2.76-6.16-6.16-6.16zm0 10.16c-2.208 0-4-1.792-4-4s1.792-4 4-4 4 1.792 4 4-1.792 4-4 4zm6.47-.988c-.689 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25z" />
-                  </svg>
-                </a>
-              </div>
             </div>
-
-            {/* Footer Links Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:col-span-2">
-              {/* Quick Links */}
-              <div className="text-center sm:text-left">
-                <h3 className="footer-heading text-gray-100 text-lg font-semibold mb-5 relative">
-                  Quick Links
-                </h3>
-                <ul className="list-none flex flex-col gap-3">
-                  {[
-                    { href: "/member", text: "Our Team" },
-                    { href: "/aboutUs", text: "About Us" },
-                    { href: "/events", text: "Events" },
-                    { href: "/projects", text: "Projects" },
-                    { href: "/contactUs", text: "Contact Us" },
-                  ].map((link, index) => (
-                    <li key={index}>
-                      <a
-                        href={link.href}
-                        className="footer-link text-gray-400 no-underline text-sm hover:text-indigo-400"
-                      >
-                        {link.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Events */}
-              <div className="text-center sm:text-left">
-                <h3 className="footer-heading text-gray-100 text-lg font-semibold mb-5 relative">
-                  Events
-                </h3>
-                <ul className="list-none flex flex-col gap-3">
-                  <li>
-                    <a
-                      href="#nimbus"
-                      className="footer-link text-gray-400 no-underline text-sm hover:text-indigo-400"
-                    >
-                      Nimbus 2k24
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="footer-link text-gray-400 no-underline text-sm hover:text-indigo-400"
-                    >
-                      Hackathons
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Contact */}
-              <div className="text-center sm:text-left">
-                <h3 className="footer-heading text-gray-100 text-lg font-semibold mb-5 relative">
-                  Contact
-                </h3>
-                <ul className="list-none flex flex-col gap-3">
-                  <li>
-                    <a
-                      href="#"
-                      className="footer-link text-gray-400 no-underline text-sm hover:text-indigo-400"
-                    >
-                      hello@appteam.dev
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="footer-link text-gray-400 no-underline text-sm hover:text-indigo-400"
-                    >
-                      +91 9876547654
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://www.instagram.com/appteam_nith/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="footer-link text-gray-400 no-underline text-sm hover:text-indigo-400"
-                    >
-                      Follow us on Instagram
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="https://www.linkedin.com/company/appteam-nith/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="footer-link text-gray-400 no-underline text-sm hover:text-indigo-400"
-                    >
-                      Follow us on LinkedIn
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Bottom */}
-          <div className="border-t border-indigo-500/20 py-8">
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 text-center">
-              <p className="text-gray-400 text-sm">
-                &copy; 2025 AppTeam. All rights reserved.
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </>
-  );
+        </footer>
+    );
 };
 
 export default Footer;

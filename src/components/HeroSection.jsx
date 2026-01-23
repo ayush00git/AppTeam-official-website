@@ -1,106 +1,124 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Gasoek_One, Ubuntu } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 
-// Load fonts properly
-const gasoek = Gasoek_One({
-  weight: "400",
-  subsets: ["latin"],
-});
-
-const ubuntu = Ubuntu({
-  weight: ["400", "500", "700"],
-  subsets: ["latin"],
+const spaceGrotesk = Space_Grotesk({
+    weight: ["300", "500", "700"],
+    subsets: ["latin"],
 });
 
 function HeroSection() {
-  const router = useRouter();
-  const goToMembers = () => router.push("/member");
-  // const goToGithub = () => router.push("/githubRegistration");
+    const router = useRouter();
+    const { scrollYProgress } = useScroll();
 
-  return (
-    <section
-      className={`h-[80vh] flex items-center bg-[#140b29] justify-center relative px-8 overflow-hidden ${ubuntu.className}`}
-    >
-      <div className="text-center max-w-4xl mx-auto">
-        {/* Heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: -50, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className={`${gasoek.className} font-extrabold text-[#a594f9] leading-none tracking-tight mb-6`}
-          style={{ fontSize: "clamp(4rem, 8vw, 8rem)" }}
-        >
-          APP<br />TEAM
-        </motion.h1>
+    // Smooth Parallax
+    const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-        {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-[#a594f9] text-xl md:text-2xl font-light mb-2 opacity-90"
-        >
-          Innovating Tomorrow&apos;s Technology Today
-        </motion.p>
+    // Float animation for the last 3 letters in TEAM (staggered)
+    const eFloat = useTransform(scrollYProgress, [0, 0.3], [0, -150]);
+    const aFloat = useTransform(scrollYProgress, [0, 0.3], [0, -250]);
+    const mFloat = useTransform(scrollYProgress, [0, 0.3], [0, -350]);
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-gray-300 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed"
-        >
-          We&apos;re a passionate team of developers, designers, and innovators
-          crafting cutting-edge solutions across multiple technology domains
-        </motion.p>
+    return (
+        <section className={`relative min-h-screen w-full bg-[#050505] text-[#f4f4f5] overflow-hidden ${spaceGrotesk.className}`}>
 
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
-        >
-          <button
-            className="bg-[#a594f9] border-2 border-[#140b29] text-[#140b29] px-8 py-4 rounded-full cursor-pointer font-semibold text-lg hover:bg-[#140b29] hover:text-[#a594f9] hover:border-[#a594f9] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-            onClick={goToMembers}
-          >
-            Meet Our Team
-          </button>
-          {/* <button
-            className="border-2 border-[#a594f9] text-[#a594f9] px-8 py-4 rounded-full cursor-pointer font-semibold text-lg hover:bg-[#a594f9] hover:text-[#140b29] transform hover:scale-105 transition-all duration-300"
-            onClick={goToGithub}
-          >
-            Github Workshop
-          </button> */}
-        </motion.div>
-      </div>
+            {/* --- PREMIUM BACKGROUND (Soft Radial Gradient) --- */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#00e1ff] opacity-[0.03] blur-[120px] rounded-full" />
+                <div className="absolute bottom-[10%] left-[-10%] w-[50%] h-[50%] bg-[#00e1ff] opacity-[0.02] blur-[100px] rounded-full" />
+            </div>
 
-      {/* Floating Elements */}
-      <motion.div
-        className="absolute top-20 left-10 w-20 h-20 border border-[#a594f9] opacity-20 rounded-full"
-        animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 4, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute top-40 right-16 w-12 h-12 bg-[#a594f9] opacity-10 rotate-45"
-        animate={{ y: [0, -15, 0] }}
-        transition={{ duration: 3, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute bottom-32 left-20 w-16 h-16 border-2 border-[#a594f9] opacity-15 rotate-12"
-        animate={{ rotate: [12, -12, 12] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-20 right-24 w-8 h-8 bg-[#a594f9] opacity-20 rounded-full"
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 2.5, repeat: Infinity }}
-      />
-    </section>
-  );
+            <div className="relative z-10 flex flex-col justify-between min-h-screen px-6 md:px-16 py-12">
+
+                {/* 1. CENTERPIECE TYPOGRAPHY */}
+                <main className="flex-1 flex flex-col justify-center">
+                    <motion.div
+                        style={{ y, opacity }}
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                        className="relative"
+                    >
+                        <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
+                            <h1 className="text-[14vw] md:text-[12vw] leading-none font-bold tracking-tight uppercase">
+                                APP T<motion.span style={{ y: eFloat }} className="inline-block">E</motion.span><motion.span style={{ y: aFloat }} className="inline-block">A</motion.span><motion.span style={{ y: mFloat }} className="inline-block text-[#00e1ff]">M</motion.span>
+                            </h1>
+
+                            {/* Integrated Arrow - Now Draggable */}
+                            <motion.div
+                                drag
+                                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                                dragElastic={0.8}
+                                initial={{ scale: 0, rotate: -45 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ delay: 0.8, duration: 0.8, type: "spring", stiffness: 100 }}
+                                className="w-16 h-16 md:w-24 md:h-24 bg-[#00e1ff] rounded-full flex items-center justify-center text-black shadow-[0_0_30px_rgba(0,225,255,0.3)] cursor-grab active:cursor-grabbing z-20"
+                            >
+                                <svg width="40%" height="40%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </motion.div>
+                        </div>
+
+                        <motion.p
+                            className="mt-8 text-xl md:text-3xl font-light text-[#888] max-w-2xl leading-relaxed"
+                            initial="hidden"
+                            animate="visible"
+                            variants={{
+                                visible: { transition: { staggerChildren: 0.03, delayChildren: 1.5 } }
+                            }}
+                        >
+                            {/* Part 1 */}
+                            {"Crafting premium digital experiences through ".split("").map((char, i) => (
+                                <motion.span key={`part1-${i}`} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
+                                    {char}
+                                </motion.span>
+                            ))}
+
+                            {/* Styled Part */}
+                            <span className="text-white font-normal underline decoration-[#00e1ff]/30 decoration-2 underline-offset-8">
+                                {"thoughtful design".split("").map((char, i) => (
+                                    <motion.span key={`part2-${i}`} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
+                                        {char}
+                                    </motion.span>
+                                ))}
+                            </span>
+
+                            {/* Part 3 */}
+                            {" and elite engineering.".split("").map((char, i) => (
+                                <motion.span key={`part3-${i}`} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
+                                    {char}
+                                </motion.span>
+                            ))}
+                        </motion.p>
+                    </motion.div>
+                </main>
+
+                {/* 2. ELEGANT FOOTER */}
+                <footer className="flex flex-col md:flex-row justify-between items-end gap-8">
+                    <div className="hidden md:block">
+                        <div className="w-12 h-px bg-[#333] mb-4" />
+                        <p className="text-xs tracking-widest text-[#444] uppercase font-medium">Creative / Modular / Precise</p>
+                    </div>
+
+                    <motion.button
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1, duration: 0.5 }}
+                        onClick={() => router.push('/member')}
+                        className="group relative px-10 py-5 bg-white text-black cursor-pointer font-bold uppercase tracking-widest overflow-hidden transition-all duration-300 hover:bg-[#00e1ff]"
+                    >
+                        <span className="relative z-10">Meet the Team</span>
+                        <div className="absolute inset-0 bg-[#00e1ff] translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                    </motion.button>
+                </footer>
+
+            </div>
+
+        </section>
+    );
 }
 
 export default HeroSection;
